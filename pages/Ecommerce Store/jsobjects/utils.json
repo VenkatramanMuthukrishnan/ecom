@@ -1,0 +1,14 @@
+{
+  "unpublishedCollection": {
+    "name": "utils",
+    "pageId": "Ecommerce Store",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "actions": [],
+    "archivedActions": [],
+    "body": "export default {\n\tonOpen: () =>{\n\t\tstoreValue('cart', appsmith.store?.cart || [])\n\t},\n\n\tresetCart: () =>{\n\t\tstoreValue('cart',[]);\n\t\tresetWidget('lst_cart');\n\t},\n\n\taddToCart: async () => {\n\t\tawait closeModal('mdl_details');\n\t\tawait storeValue('cart', appsmith.store.cart.concat({id:lst_products.selectedItem.id,model:lst_products.selectedItem.model,qty:1,price:lst_products.selectedItem.price,image:lst_products.selectedItem.image}));\n\t\tawait showAlert(`${lst_products.selectedItem.model} added to cart`,'info')\n\t},\n\n\tsaveQty: async (qty, itemId)=>{\n\t\tlet cart = appsmith.store.cart;\n\t\tlet cartRow = cart.findIndex(item=>item.id==itemId);\n\t\tcart[cartRow].qty = qty;\n\t\tawait storeValue('cart',cart);\n\t\tawait resetWidget('lst_cart')\n\t},\n\n\tshowConfirm: async (title,message,icon) => {\n\t\tawait storeValue('confirm',{message:message,title:title,icon:icon});\n\t\tawait resetWidget('mdl_confirm');\n\t\tawait showModal('mdl_confirm');\n\t},\n\n\tisConfirmed: () => {\n\t\tlet confirm = appsmith.store.confirm;\n\t\tconfirm.response = true;\n\t\tstoreValue('confirm',confirm);\n\t\tcloseModal('mdl_confirm');\n\t\t//showAlert(JSON.stringify(confirm));\n\n\t\tlet title = confirm.title;\n\t\tswitch(title){\n\t\t\tcase 'WARNING':\n\t\t\t\tutils.resetCart()\n\t\t\t\tbreak;\n\t\t\tcase 'CHECKOUT':\n\t\t\t\tnavigateTo('Checkout','SAME_WINDOW');\n\t\t\t\tbreak;\n\t\t\tcase 'RESET FILTERS':\n\t\t\t\t//showAlert('case = reset filters');\n\t\t\t\tstoreValue('search','')\n\t\t\t\tstoreValue('filter','')\n\t\t\t\tresetWidget('Select1')\n\t\t\t\tbreak;\n\t\t\tdefault:\n\t\t\t\t//showAlert('default case');\n\t\t}\n\t\treturn confirm\n\t},\n\n\n\tgetSelectOptions: (data, labelKey, valueKey = 'id') => {  \n\t\t// creates a deduplicated array of SelectOptions from data \n\t\tlet dupValues = data.map(row => {return {'label':row[labelKey], 'value':row[valueKey]}});\n\t\tlet output = {};\n\t\tdupValues.forEach(option => {output[option.label] = option});\n\t\tlet outputProps = Object.getOwnPropertyNames(output);\n\t\treturn outputProps.map(prop => output[prop])\n\t},\n}",
+    "variables": []
+  },
+  "id": "Ecommerce Store_utils",
+  "deleted": false
+}
